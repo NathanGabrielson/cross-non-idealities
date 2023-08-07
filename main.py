@@ -186,8 +186,10 @@ def my_function(Ri, layout_array, Runselhi, Runsellow,
 
     Rbiasl = wlbiasl
     Rbiasl = Rbiasl.astype('float32')
+
     Rbiasl[Rbiasl == 0] = Runselhi
     Rbiasl[Rbiasl != Runselhi] = Runsellow
+
 
 
     Rbiasr = wlbiasr

@@ -13,7 +13,6 @@ size = [4]
 def crossbar(resis_map, BLres, WLres, resBitOne, resWordOne, resBitTwo, resWordTwo, \
              VoltWLone, VoltBLone, VoltWLtwo, VoltBLtwo, request ):
     
-    finalCrossbar = []
     n = len(resis_map[0])
     m = len(resis_map)
 
@@ -164,16 +163,31 @@ def crossbar(resis_map, BLres, WLres, resBitOne, resWordOne, resBitTwo, resWordT
 
 ########
 
-size = 4
+size = 20
+sizes=[size]
 
-resis_map = np.full((size,size), 2)
+resis_map = np.full((size,size), 2) #FIX RESISTANCE MAP
+
+
+wlbias_zeros = np.array([0 for i in range(0,sizes[0])]) 
+wlbias_one_v = wlbias_zeros.copy()
+wlbias_one_v[:] = 1
+high=10e20
+low=10e-20
+
+resWordOne = wlbias_one_v.astype('float32') #rbiasl
+resWordOne[resWordOne==0] = high
+resWordOne[resWordOne!=high] = low
+
+resWordTwo = wlbias_zeros.astype('float32') #rbiasl
+resWordTwo[resWordOne==0] = high
+resWordTwo[resWordOne!=high] = low
+
 
 BLres = 500
 WLres = 500
-resBitOne = [1,2,3,4] #rbiasl in his code
-resWordOne = [1,2,3,4] #wllbiasl
-resBitTwo = [1,2,3,4] #rbiasr
-resWordTwo = [1,2,3,4] #wllbiasr
+resBitOne = np.full(size, high) 
+resBitTwo = np.full(size, low) 
 VoltWLone = np.full(size, 1)
 VoltBLone = np.full(size, 1)
 VoltWLtwo = np.full(size, 1)
@@ -181,17 +195,20 @@ VoltBLtwo = np.full(size, 1)
 request = 'wl'
 secRequest = 'bl'
 
+
 result = crossbar(resis_map=resis_map, BLres=BLres, WLres=WLres, resWordOne=resWordOne,\
                    resBitOne=resBitOne, resWordTwo=resWordTwo, resBitTwo=resBitTwo, VoltWLone=VoltWLone,\
-                      VoltBLone=VoltBLone, VoltWLtwo=VoltWLtwo, VoltBLtwo=VoltBLtwo, request=request)
-secResult = crossbar(resis_map=resis_map, BLres=BLres, WLres=WLres, resWordOne=resWordOne,\
-                   resBitOne=resBitOne, resWordTwo=resWordTwo, resBitTwo=resBitTwo, VoltWLone=VoltWLone, \
-                    VoltBLone=VoltBLone, VoltWLtwo=VoltWLtwo, VoltBLtwo=VoltBLtwo, request=secRequest)
+                      VoltBLone=VoltBLone, VoltWLtwo=wlbias_zeros, VoltBLtwo=VoltBLtwo, request=request)
 
+# secResult IS NOT FUNCTIONAL YET
+
+#secResult = crossbar(resis_map=resis_map, BLres=BLres, WLres=WLres, resWordOne=resWordOne,\
+#                   resBitOne=resBitOne, resWordTwo=resWordTwo, resBitTwo=resBitTwo, VoltWLone=VoltWLone, \
+#                    VoltBLone=VoltBLone, VoltWLtwo=VoltWLtwo, VoltBLtwo=VoltBLtwo, request=secRequest) 
 
 print('Wordline: \n', result)
 
-print('\nBitline:\n', secResult)
+#print('\nBitline:\n', secResult)
 
 
 
@@ -227,4 +244,4 @@ fig1, ax1 = plt.subplots(1,2, figsize=(12,6))
 
 
 contour(fig1, ax1, 0, result, 'WL dist, 1V left')
-conto
+#contour(fig1, ax1, 1, secResult, 'BL dist, 1V left')
