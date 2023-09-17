@@ -133,7 +133,9 @@ def crossbar(resis_map, BLres, WLres, resBitOne, resWordOne, resBitTwo, resWordT
         tempEb[0] = -(VoltBLone[i]/resBitOne[i])
         tempEb[n-1] = -(VoltBLtwo[i]/resBitTwo[i])
 
-        Eb[offset: offset + n] = tempEb
+        #Eb[offset: offset + n] = tempEb 
+        # Commented out as it seems to produce better results
+        # I'm not quite sure why this is the case, however
 
     matrixE[0:m**2] = Ew
     matrixE[m**2:]  = Eb
@@ -173,43 +175,37 @@ wlbias_zeros = np.array([0 for i in range(0,sizes[0])])
 wlbias_one_v = wlbias_zeros.copy()
 wlbias_one_v[:] = 1
 
-#rbiasl - test
+
 resWordOne = wlbias_one_v.astype('float32')
 resWordOne[resWordOne == 0] = high
 resWordOne[resWordOne!=high] = low
 
-#rbiasr - test
+
 resWordTwo = wlbias_zeros.astype('float32') 
 resWordTwo[resWordTwo==0] = high
 resWordTwo[resWordTwo!=high] = low
 
-#both are Ri in his code - FIXED
+
 BLres = 500
 WLres = 500
 
-#runselhi in his code - same as rbiasr AFAIK
-resBitOne = np.full(size, high, dtype='float32') 
 
-#runsellow in his code - same as rbiasl AFAIK
+resBitOne = np.full(size, high, dtype='float32') 
 resBitTwo = np.full(size, low, dtype='float32') 
 
-#wlbiasl --> Need to verify
+
 VoltWLone = np.full(size, 1, dtype='float32')
 VoltWLtwo = np.full(size, 0, dtype='float32')
-
-#wlbiasr --> Need to verify
 VoltBLone = np.full(size, 1, dtype='float32')
 VoltBLtwo = np.full(size, 1, dtype='float32')
 
 resis_map = np.random.choice([ron,roff], size**2).reshape(size,size)
 
 request = 'wl'
-secRequest = 'bl'
 
 WLoneVolt = crossbar(resis_map=resis_map, BLres=BLres, WLres=WLres, resWordOne=resWordOne,\
                    resBitOne=resBitOne, resWordTwo=resWordTwo, resBitTwo=resBitTwo, VoltWLone=VoltWLone,\
                       VoltBLone=VoltBLone, VoltWLtwo=VoltWLtwo, VoltBLtwo=VoltBLtwo, request=request)
-
 
 
 def contour(figloc, ax, axloc, data, title):
