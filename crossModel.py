@@ -10,6 +10,7 @@ import scipy.sparse as sparse
 import sys
 
 
+
 np.set_printoptions(threshold=sys.maxsize)
 
 def crossbar(resis_map, BLres, WLres, resBitOne, resWordOne, resBitTwo, resWordTwo, \
